@@ -1,0 +1,13 @@
+# The file should contain exactly two sections: producer and consumer, each starting with the corresponding keyword
+# An empty line should be inserted after end of each section. Each data field is separated by tabs
+# `node` field denotes the node in the network to which producer or consumer is connected
+producer
+# producer	node	bandwidth	metric	delay	queue	payload	prefix
+P1	Node8	5Mbps	1	5ms	100	1024	/data/p1
+P0	Node4	5Mbps	1	5ms	100	1024	/data/p0
+
+consumer
+# producer	consumer	node	bandwidth	metric	delay	queue	rate
+P0	C0	Node0	1Mbps	1	5ms	100	200
+P1	C1	Node10	1Mbps	1	5ms	100	200
+

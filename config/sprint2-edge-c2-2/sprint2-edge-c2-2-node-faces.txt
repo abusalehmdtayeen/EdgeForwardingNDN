@@ -1,0 +1,75 @@
+Node10
+/data/p0 5
+259 260 257 258 256
+/data/p1 5
+259 256 260 257 258
+P0
+/data/p0 1
+258
+/data/p1 1
+256
+P1
+/data/p0 1
+256
+/data/p1 1
+258
+C1
+/data/p0 1
+256
+/data/p1 1
+256
+C0
+/data/p0 1
+256
+/data/p1 1
+256
+Node9
+/data/p0 6
+259 261 258 257 256 260
+/data/p1 6
+257 259 261 258 256 260
+Node8
+/data/p0 2
+258 257
+/data/p1 1
+256
+Node1
+/data/p0 2
+256 257
+/data/p1 2
+257 256
+Node0
+/data/p0 2
+258 257
+/data/p1 2
+257 258
+Node3
+/data/p0 2
+258 256
+/data/p1 2
+256 258
+Node2
+/data/p0 1
+256
+/data/p1 1
+256
+Node5
+/data/p0 4
+259 256 257 258
+/data/p1 4
+258 259 256 257
+Node4
+/data/p0 1
+256
+/data/p1 4
+258 257 260 259
+Node7
+/data/p0 3
+258 256 257
+/data/p1 3
+258 256 257
+Node6
+/data/p0 4
+259 256 258 257
+/data/p1 4
+257 259 258 256
