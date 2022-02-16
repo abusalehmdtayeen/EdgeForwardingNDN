@@ -52,7 +52,7 @@ RandStrategy::RandStrategy(Forwarder& forwarder, const Name& name)
   else
     this->base_path = "/home/"+ user_name + "/ndnSIM/scenario/";
 
-  this->file_path = base_path + "rand-traces/";
+  this->file_path = base_path + "traces/";
 }
 
 RandStrategy::~RandStrategy()

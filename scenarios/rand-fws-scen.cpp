@@ -24,7 +24,8 @@
 
 #include "ns3/ndnSIM/model/ndn-common.hpp"
 #include "ns3/ndnSIM/model/ndn-net-device-transport.hpp"
-#include "ns3/ndnSIM/utils/tracers/ndn-my-l3-rate-tracer.hpp"
+//#include "ns3/ndnSIM/utils/tracers/ndn-my-l3-rate-tracer.hpp"
+#include "ns3/ndnSIM/utils/tracers/ndn-l3-rate-tracer.hpp"
 #include "ns3/ndnSIM/utils/tracers/l2-rate-tracer.hpp"
 #include "ns3/ptr.h"
 #include "ns3/net-device.h"
@@ -87,7 +88,7 @@ main(int argc, char* argv[])
   //----------------Simulation Parameters------------
   int dotrace = dotraceArg;
   int sim_id = 1;
-  std::string resultID = "rand-traces";
+  std::string resultID = "traces";
   std::string configFileName = t_id+"-cons-prod-config.txt";
   std::string topoFileName = "topo-" + t_id + ".txt";
   //--------------------------------------------
@@ -144,7 +145,8 @@ main(int argc, char* argv[])
   Simulator::Stop(Seconds(runLenArg));
   
   if (dotrace){
-    ns3::ndn::MyL3RateTracer::InstallAll(base_path + resultID +"/" + t_id + "-"+ std::to_string(sim_id) + "-count-trace.txt", Seconds(1.0));
+    //ns3::ndn::MyL3RateTracer::InstallAll(base_path + resultID +"/" + t_id + "-"+ std::to_string(sim_id) + "-count-trace.txt", Seconds(1.0));
+    ns3::ndn::L3RateTracer::InstallAll(base_path + resultID +"/" + t_id + "-"+ std::to_string(sim_id) + "-count-trace.txt", Seconds(1.0));
     ns3::ndn::AppDelayTracer::InstallAll(base_path + resultID +"/" + t_id + "-"+ std::to_string(sim_id) + "-app-delays-trace.txt");
     ns3::L2RateTracer::InstallAll (base_path + resultID +"/" + t_id + "-"+ std::to_string(sim_id) + "-drop-trace.txt", Seconds (1.0));
   }
