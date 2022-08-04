@@ -1,0 +1,53 @@
+# topo-sprint2
+
+# any empty lines and lines starting with '#' symbol is ignored
+# each line in this section represents one router and should have the following data
+router
+# Node city latitude longitude
+N10 WashingtonDC 0 1
+P0 P0 0 1
+P1 P1 0 1
+C1 C1 0 1
+C0 C0 0 1
+N9 Stockton 0 1
+N8 Seattle 0 1
+N1 Atlanta 0 1
+N0 Anaheim 0 1
+N3 Cheyenne 0 1
+N2 Boulder 0 1
+N5 FortWorth 0 1
+N4 Chicago 0 1
+N7 NewYork(Pennsauken) 0 1
+N6 KansasCity 0 1
+# link section defines point-to-point links between nodes and characteristics of these links
+link
+# Each line should be in the following format (only first two are required, the rest can be omitted)
+# srcNode   dstNode     bandwidth   metric  delay   queue   lossrate
+# bandwidth: link bandwidth
+# metric: routing metric
+# delay:  link delay
+# queue:  MaxPackets for transmission queue on the link (both directions)
+# lossrate: packet loss rate of the link
+N10  N9  1Mbps  1  23.72ms  10  
+N10  N1  1Mbps  1  5.42ms  10  
+N10  N5  1Mbps  1  12.11ms  10  
+N10  N7  1Mbps  1  2.04ms  10  
+N10  N6  1Mbps  1  9.43ms  10  
+P0  N4  5Mbps  1  5.0ms  10  
+P1  N8  5Mbps  1  5.0ms  10  
+C0  N0  5Mbps  1  5.0ms  10  
+C1  N1  5Mbps  1  5.0ms  10
+N9  N8  1Mbps  1  6.69ms  10  
+N9  N0  1Mbps  1  3.42ms  10    
+N9  N4  1Mbps  1  17.92ms  10  
+N9  N7  1Mbps  1  25.03ms  10  
+N4  N8  1Mbps  1  17.33ms  10  
+N1  N5  1Mbps  1  7.5ms  10
+N1  N6  1Mbps  1  6.3ms  10  
+N0  N5  1Mbps  1  11.9ms  10
+N3  N9  1Mbps  1  9.03ms  10  
+N3  N2  1Mbps  1  0.81ms  10  
+N3  N6  1Mbps  1  5.56ms  10  
+N5  N6  1Mbps  1  4.66ms  10  
+N4  N7  1Mbps  1  7.12ms  10  
+N4  N6  1Mbps  1  4.12ms  10  
