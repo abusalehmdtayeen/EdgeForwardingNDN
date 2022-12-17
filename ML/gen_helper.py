@@ -14,10 +14,10 @@ def make_dir(path):
        print ('Error: Creating directory. ' +  directory)
 
 #-------------------------------------
-def read_config(base_path, net_id):
+def read_config(base_path, net_id, cfg_id):
 	producer_dict = {}
 	consumer_dict = {}
-	with open(base_path+"/config/"+net_id + "/"+net_id+"-cons-prod-config.txt", 'r') as reader:
+	with open(base_path+"/config/"+net_id + "/"+net_id+"-cons-prod-config-" + str(cfg_id) +".txt", 'r') as reader:
 		# Read and print the entire file line by line
 		line = reader.readline()
 		

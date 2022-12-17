@@ -1,0 +1,26 @@
+syntax = "proto2";
+
+package edgmlfw3msg;
+
+message Node {
+	required string id = 1; 
+    
+	message Face {
+  		optional double feature1 = 1;
+  		optional double feature2 = 2;
+        optional int32 face_id = 3;
+	}	
+
+    optional double ext_ft1 = 2;
+    optional double ext_ft2 = 3;
+	repeated Face faces = 4;
+	optional bool done = 5;
+}
+
+
+message Agent {
+	required int32 status = 1;  
+}
+
+
+

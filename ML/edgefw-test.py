@@ -10,13 +10,15 @@ import math
 import statistics 
 import zmq
 import google.protobuf.text_format
-from edg_ml_fw2_msg_pb2 import *
+#from edg_ml_fw2_msg_pb2 import *
+from edg_ml_fw3_msg_pb2 import *
 from gen_helper import *
 import signal
 import subprocess
 import getpass
 import pickle
 import shutil
+import argparse
 
 from os import listdir
 
@@ -91,11 +93,15 @@ def get_state():
         state_features.append(isrpr)
         if face.HasField('feature2'):
            delay = face.feature2
+           #if feature_id in ['f2', 'f3']:
            state_features.append(delay)
 	
-    ext_ft = node_obj.ext_feature
+    ext_ft1 = node_obj.ext_ft1
+    ext_ft2 = node_obj.ext_ft2
     print(f_ids)
-    state_features.append(ext_ft)
+    #if extra_features == 1:
+    state_features.append(ext_ft1)
+    state_features.append(ext_ft2)
     
     print ("Received state: ")
     print (state_features)
@@ -137,7 +143,7 @@ def run_episode(episode_num, rate, sim_len, a_config_id, dotrace):
     else:
        trace = 0
     print ("Running episode %d"%episode_num)
-    command = './waf --run="isr-pr-4-ml-scen --tId='+net_id+ " --sId="+str(episode_num) +" --agCnfg="+ str(a_config_id) + " --agPort="+ port +" --trace="+str(trace)+ " --runLen="+str(sim_len)+ " --rate="+str(rate) + '"'
+    command = './waf --run="isr-pr-51-ml-scen --tId='+net_id+ " --sId="+str(episode_num) +" --agCnfg="+ str(a_config_id) + " --agPort="+ port +" --trace="+str(trace)+ " --runLen="+str(sim_len)+ " --rate="+str(rate) + " --cfgId=" + str(cons_prod_config_id) + '"'
     p = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=None, stderr=None, cwd=sim_working_dir)
     
 #------------------------------------------------
@@ -155,14 +161,14 @@ def create_agents(model_type):
         ag_flow = node_flow_dict[agent]
         node_face_indx_dict = get_node_face_info(sim_path, net_id, ag_flow)
         ag_faces = node_face_indx_dict[agent][ag_flow]     
-        input_dim = len(ag_faces) * num_features
+        input_dim = len(ag_faces) * num_features + extra_features
         if model_type == 'MLP':     
             model = Net(input_dim, hid_dim)         
-            model_path = data_path + "/" + agent + "-" + train_file + "model.pth"	
+            model_path = model_root_dir + "/" + agent + "-" + train_file + "-MLP-h"+str(hid_dim)+".pth"	
             model.load_state_dict(torch.load(model_path))
         else:
             print("load model %s from disk"%model_type)
-            model_path = data_path + "/" + agent + "-" + train_file + '-' + model_type + '.sav'
+            model_path = model_root_dir + "/" + agent + "-" + feature_id + '-' + model_type + '.sav'
             model = pickle.load(open(model_path, 'rb'))	
         	
         agent_dict[agent] = model
@@ -174,7 +180,7 @@ def create_agents(model_type):
 def get_scaling_info():
     ag_scale_info = {}
     for agent in agent_nodes:
-       file_path = data_path + "/" + agent + "-" + train_file + "max-min.csv"	    
+       file_path = data_path + "/" + agent + "-" + feature_id + "-max-min.csv"	    
        csv_data = []
        #print ("Reading %s ...."%file_name)
        with open(file_path, 'r') as csvfile:
@@ -209,28 +215,63 @@ def get_action(ag_id, model_type, state):
 #--------------------------------------------
 if __name__ == "__main__":
     
+    parser = argparse.ArgumentParser(description='provide arguments plotting')
+    parser.add_argument('--rate', help='interest sending rate')
+    parser.add_argument('--dur', help='simulation duration')
+    parser.add_argument('--mtype', help='model type')
+    parser.add_argument('--fid', help='feature id')
+    #parser.add_argument('--agcfg', help='agent config id')
+    #parser.add_argument('--tid', help='topology id')
+    
+    args = vars(parser.parse_args())
+
+    model_type = str(args['mtype']) #model type
+    feature_id = str(args['fid'])
+    rate = int(args['rate'])
+    duration = int(args['dur'])
+    
     #-------Network Parameters------------
-    net_id = "sprint2-edge-c2-6" #"sprint2-bttnck-1" 
+    net_id = "sprint2-edge-c4-6" #"sprint2-edge-c4-6" #"sprint2-bttnck-1" 
     agent_config_id = 1
+    cons_prod_config_id = 1 #consumer/producer configuration file
     port = "5555"
     out_dir_id = "EdgeMLFlow_results"
+    train_file = "IsrPr51-3000s-r100-150-200" #"IsrPr52-l5000-r200" #"IsrPr51-3000s-r150-225" #"IsrPr51-3000s-r200" #"IsrPr51-3000s-r150-225"
     #------------SIMULATION PARAMETERS-----------
     EPISODES = 1	
-    rate = 200 #interest sending rate
-    duration = 120 #seconds of simulation   
+    #rate = 200 #interest sending rate
+    #duration = 120 #seconds of simulation   
     pkt_thrs = 200
-    num_features = 1 #number of features per face
-    extra_features = 1
+    num_features = 2 #number of features per face
+    extra_features = 2
     Trace = True
     #-------------Others---------------------
-    hid_dim = 16
-    data_path = curr_path+"/saved_models/"+net_id+"/"
-    model_type = 'SVM-NL' #['RF', 'LR', 'DT', 'SVM-L', 'SVM-NL']
-    train_file = "10000s-f1"
+    hid_dim = 8
+    data_path = curr_path + "/data/" + net_id + "/" + train_file +"/" #curr_path+"/data/"+net_id+"/"
+    model_root_dir = curr_path + "/saved_models/" + net_id + "/" + train_file + "/"   #curr_path+"/saved_models/"+net_id+"/"
+    
+    #model_type = 'RF' #['RF', 'LR', 'DT', 'SVM-L', 'SVM-NL', 'MLP']
+    #feature_id = "f2"
+    
+    
+    if feature_id == 'f27':
+       num_features = 1 #number of features per face
+       extra_features = 1
+    elif feature_id == 'f2':
+       num_features = 2 #number of features per face
+       extra_features = 1
+    elif feature_id == 'f3':
+       num_features = 2 #number of features per face
+       extra_features = 0
+    elif feature_id == 'f0':
+       num_features = 1 #number of features per face
+       extra_features = 0
+    
+    
     #--------------------------
     
     G = get_graph(sim_path, net_id)
-    p_dict, c_dict = read_config(sim_path, net_id)
+    p_dict, c_dict = read_config(sim_path, net_id, cons_prod_config_id)
 	#print(c_dict)
 	#print(p_dict)
     node_flow_dict = {}
@@ -258,7 +299,7 @@ if __name__ == "__main__":
         
     start_time = time.time()
 
-    out_path = curr_path+"/"+out_dir_id+'/'+model_type
+    out_path = curr_path+"/"+out_dir_id+'/'+ net_id + "/" + train_file + "/" + model_type
     if(Trace):
       make_dir(out_path)
 
@@ -295,16 +336,14 @@ if __name__ == "__main__":
             send_action(action) #perform the action in the environment
             traces[str(node_id)].append(state_features+[action])
             
-    #save the test traces
-    for agent_id in agent_obj_dict.keys():
-        write_csv(out_path + "/"+train_file + "-" + str(agent_id)+"-traces" + ".csv", traces[agent_id])
+    
     #------------------find best route nodes--------------------------------
     file_names = find_filenames_ext(sim_path + '/'+br_trace_dir+'/')
 	#filter node names from file names
     logged_nodes = [ fname[:fname.rfind("-")] for fname in file_names if 'count' in fname] #get the nodes that has been logged
     br_nodes = [nd for nd in logged_nodes if nd not in agent_obj_dict.keys()] #get the names of best route nodes
-    #print("Best route nodes")
-    #print(br_nodes)
+    print("Best route nodes")
+    print(br_nodes)
     #~~~~~~~~~~~~~~~copy trace files~~~~~~~~~~~~~~~~~~~
     dst = sim_path+"/results/IsrPrML/"
     for nd in br_nodes:
@@ -323,10 +362,13 @@ if __name__ == "__main__":
     if (Trace):
        # renaming output directory
        src_dir = sim_path+"/results/IsrPrML"
-       dst_dir = sim_path+"/results/IsPrMl"+train_file 
-       os.rename(src_dir, dst_dir)
-       shutil.move(dst_dir, out_path+"/")
-       
+       dst_dir = "IsPrMl5"+"-"+feature_id + "-r"+str(rate)
+       dst_path = sim_path+"/results/"+ dst_dir 
+       os.rename(src_dir, dst_path)
+       shutil.move(dst_path, out_path+"/")
+       #save the test traces
+       for agent_id in agent_obj_dict.keys():
+           write_csv(out_path + "/"+dst_dir + "/" + train_file + "-" + str(agent_id)+"-traces" + ".csv", traces[agent_id])
     #clean_up(agent_obj_dict)
     
     end_time = time.time()
