@@ -2,14 +2,13 @@
 
 ## Installation
 
-### Installing ndnSIM-2.7
 
 1. Follow the steps from the link below:
 
-https://www.fatalerrors.org/a/installing-ndn-sim2.7-in-ubuntu18.html
+[Installing ndnSIM-2.7](https://www.fatalerrors.org/a/installing-ndn-sim2.7-in-ubuntu18.html)
 
 2. Run the following commands:
-``
+`
 cd ns-3
 ./waf configure -d optimized
 ./waf
@@ -23,7 +22,7 @@ export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 ./waf configure
 
 ./waf --run <scenario>
-``
+`
 
 ## Description
 
