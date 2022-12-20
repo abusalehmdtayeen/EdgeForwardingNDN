@@ -1,5 +1,29 @@
 # Edge forwarding using machine learning in NDN.
 
+## Installation
+
+### Installing ndnSIM-2.7
+
+1. Follow the steps from the link below:
+
+https://www.fatalerrors.org/a/installing-ndn-sim2.7-in-ubuntu18.html
+
+2. Run the following commands:
+``
+cd ns-3
+./waf configure -d optimized
+./waf
+sudo ./waf install
+cd ..
+git clone https://github.com/named-data-ndnSIM/scenario-template.git scenario
+cd scenario
+export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+
+./waf configure
+
+./waf --run <scenario>
+``
 
 ## Description
 
